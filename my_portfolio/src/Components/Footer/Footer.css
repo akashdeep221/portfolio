@@ -84,6 +84,15 @@
         flex-direction: column;
         gap: 50px;
     }
+    .footer-top-right{
+        flex-direction: column;
+        align-items: center;
+    }
+    .footer-email-input {
+        padding: 15px 10px;
+        padding-right: 30px;
+        max-width: 250px;
+    }
     .footer-bottom {
         display: flex;
         flex-direction: column-reverse;

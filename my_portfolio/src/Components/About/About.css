@@ -24,7 +24,7 @@
 }
 .about-section{
     display: flex;
-    gap: 80px;
+    gap: 60px;
 }
 .about-right{
     display: flex;
@@ -99,8 +99,8 @@
 
 @media (max-width: 800px){
     .about{
-        gap: 80px;
-        margin: 50px 70px;
+        gap: 50px;
+        margin: 50px 6%;
         align-items: start;
     }
     .about-title h1{
@@ -115,20 +115,33 @@
     }
     .about-section{
         flex-direction: column;
+        padding-left: 0px;
+        padding-right: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
     }
     .about-left{
         display: none;
     }
     .about-para{
         font-size: 18px;
-        line-height: 32px;
+        line-height: 25px;
+        text-align: justify;
+    }
+    .about-skills{
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
     .about-skill{
         gap: 20px;
         align-items: center;
     }
     .about-skill p{
-        font-size: 20px;
+        font-size: 16px;
+        min-width: 90px;
     }
     .about-skill hr{
         height: 6px;

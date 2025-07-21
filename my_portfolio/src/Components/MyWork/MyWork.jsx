@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './MyWork.css';
 import theme_pattern from '../../assets/theme_pattern.png';
 import mywork_data from '../../assets/mywork_data';
@@ -12,9 +13,11 @@ const MyWork = () => {
                 <img src={theme_pattern} alt="" />
             </div>
             <div className="mywork-container">
-                {mywork_data.map((work, index) => {
-                    return <img key={index} src={work.w_img} alt=''/>
-                })}
+                {mywork_data.map((work, index) => (
+                    <Link key={index} to={`/workpage/${index + 1}`}>
+                        <img src={work.w_img} alt='' />
+                    </Link>
+                ))}
             </div>
             <div className="mywork-showmore">
                 <p>Show More</p>

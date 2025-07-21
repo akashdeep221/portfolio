@@ -34,14 +34,13 @@
     border-radius: 20px;
     border: 2px solid #fff;
     transition: 0.4s;
-    cursor: pointer;
 }
 
 .solutions-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 40px;
-    margin-bottom: 80px;
+    gap: 30px;
+    margin-bottom: 50px;
 }
 
 .solutions-format h3 {
@@ -83,7 +82,7 @@
     .solutions {
         align-items: start;
         gap: 70px;
-        margin: 20px 70px;
+        margin: 20px 6%;
     }
     .solutions-title h1 {
         padding: 0;
@@ -94,22 +93,31 @@
         margin-right: -20px;
     }
     .solutions-format {
-        gap: 20px;
-        padding: 32px;
+        gap: 10px;
+        padding: 20px;
+    }
+    .solutions-format h3 {
+        font-size: 22px;
+        font-weight: 600;
     }
     .solutions-format h2 {
-        font-size: 28px;
+        font-size: 20px;
     }
     .solutions-format p {
-        font-size: 18px;
-        line-height: 32px;
+        font-size: 16px;
+        line-height: 26px;
         max-width: 300px;
+    }
+    .solutions-readmore {
+        gap: 10px;
     }
     .solutions-readmore img {
         width: 20px;
     }
     .solutions-container {
         grid-template-columns: 1fr 1fr;
-        gap: 30px;
+        gap: 20px;
+        max-width: 90vw;
+        margin-left: -3vw;
     }
 }
