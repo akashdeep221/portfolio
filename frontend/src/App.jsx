@@ -9,6 +9,7 @@ import Contact from './Components/Contact/Contact';
 import Footer from './Components/Footer/Footer';
 import SolutionPage from './Components/SolutionPage/SolutionPage';
 import WorkPage from './Components/WorkPage/WorkPage';
+import Product from './Components/Product/Product';
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         } />
         <Route path="/solution/:id" element={<SolutionPage />} />
         <Route path="/workpage/:id" element={<WorkPage />} />
+        <Route path="/product/request" element={<Product />} />
       </Routes>
     </>
   );

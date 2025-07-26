@@ -32,6 +32,12 @@ const Solutions = () => {
                     </Link>
                 ))}
             </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 40 }}>
+                <Link to="/product/request" className="product-request" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: 15, borderRadius: 50, border: '2px solid #08dfd4', padding: '30px 60px', fontSize: 22, fontWeight: 500, marginBottom: 80, transition: '0.6s', cursor: 'pointer', alignItems: 'center' }}>
+                    <p>Need a Product/Solution?</p>
+                    <img src={arrow_icon} alt="" />
+                </Link>
+            </div>
         </div>
     );
 };
