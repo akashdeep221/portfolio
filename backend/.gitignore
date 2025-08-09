@@ -1,0 +1,42 @@
+# Python virtual environment
+venv/
+
+# SQLite database
+db.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables and secrets
+.env
+
+# VS Code settings
+.vscode/
+
+# OS-specific files
+*.log
+.DS_Store
+Thumbs.db
+
+# Django static and media files (if generated)
+static/
+media/
+
+# Migrations cache (if any)
+*.sqlite3
+
+# Pytest cache
+.pytest_cache/
+
+# MyPy cache
+.mypy_cache/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Temporary files
+*.tmp
+*.bak
