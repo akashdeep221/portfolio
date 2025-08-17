@@ -11,22 +11,30 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env at project root (if present)
+load_dotenv()
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w%_@&wa2intv_ewl019)m$pz*g4d&=i!1#()(n6xkkdj*efe@t'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-w%_@&wa2intv_ewl019)m$pz*g4d&=i!1#()(n6xkkdj*efe@t')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = []
+_allowed_hosts = os.environ.get('ALLOWED_HOSTS', '').strip()
+ALLOWED_HOSTS = [h.strip() for h in _allowed_hosts.split(',') if h.strip()] if _allowed_hosts else []
 
+BACKEND_BASE_URL = os.environ.get('BACKEND_BASE_URL', 'http://localhost:8000')
 
 # Application definition
 
@@ -65,16 +73,27 @@ REST_FRAMEWORK = {
 }
 
 # CORS
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # Update with your frontend URL/port
+_cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').strip()
+CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()] if _cors_origins else [
+    'http://localhost:5173',  # default dev origin
 ]
 CORS_ALLOW_CREDENTIALS = True
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
 
-# Email backend (console for dev)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Email backend (SMTP via environment variables)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'webmaster@localhost'
+
+if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+    raise ImproperlyConfigured("EMAIL_HOST_USER/EMAIL_HOST_PASSWORD not set. Check your .env")
 
 ROOT_URLCONF = 'backend.urls'
 
