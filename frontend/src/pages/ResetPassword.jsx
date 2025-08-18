@@ -57,8 +57,11 @@ const ResetPassword = () => {
       const res = await fetch(`${API_BASE}/api/auth/password-reset-confirm/${uidb64}/${token}/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Backend serializer expects only `new_password`
-        body: JSON.stringify({ new_password: password })
+        body: JSON.stringify({
+          uid: uidb64,
+          token,
+          new_password: password
+        })
       });
       let data = null;
       try { data = await res.json(); } catch {}

@@ -53,8 +53,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,10 +74,33 @@ REST_FRAMEWORK = {
 
 # CORS
 _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').strip()
-CORS_ALLOWED_ORIGINS = [o.strip() for o in _cors_origins.split(',') if o.strip()] if _cors_origins else [
-    'http://localhost:5173',  # default dev origin
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.0.102:5173'
 ]
+
+# [o.strip() for o in _cors_origins.split(',') if o.strip()] if _cors_origins else [
+#     'http://localhost:5173',
+#     'http://127.0.0.1:5173',
+# ]
+
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF trusted origins (Django 4+) to mirror dev frontend origins
+_csrf_trusted = os.environ.get('CSRF_TRUSTED_ORIGINS', '').strip()
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://192.168.0.102:5173'
+]
+
+# [o.strip() for o in _csrf_trusted.split(',') if o.strip()] if _csrf_trusted else [
+#     'http://localhost:5173',
+#     'http://127.0.0.1:5173',
+# ]
+
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
