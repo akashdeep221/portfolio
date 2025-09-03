@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'products',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -117,6 +118,10 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER or 'webmaster@localhost'
 
 if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
     raise ImproperlyConfigured("EMAIL_HOST_USER/EMAIL_HOST_PASSWORD not set. Check your .env")
+
+# Razorpay keys (do not hardcode; set via environment)
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', '')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', '')
 
 ROOT_URLCONF = 'backend.urls'
 

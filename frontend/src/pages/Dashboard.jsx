@@ -5,9 +5,11 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const access = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
   const [name, setName] = useState('');
+  const [currentRequestId, setCurrentRequestId] = useState(null);
+  const [hasActiveRequest, setHasActiveRequest] = useState(false);
 
   // Base API URL (Vite env or current origin)
-  const API_BASE = (import.meta.env.VITE_API_BASE_URL || window.location.origin).replace(/\/+$/,'');
+  const API_BASE = (import.meta.env.VITE_API_BASE_URL || window.location.origin).replace(/\/+$/, '');
 
   useEffect(() => {
     // If no token, send to login page
@@ -32,7 +34,7 @@ const Dashboard = () => {
     })
       .then(async (res) => {
         let data = {};
-        try { data = await res.json(); } catch {}
+        try { data = await res.json(); } catch { }
         if (res.status === 401) {
           // Unauthorized or expired token
           localStorage.removeItem('accessToken');
@@ -46,11 +48,12 @@ const Dashboard = () => {
           setName(candidate);
           localStorage.setItem('userName', candidate);
         }
+        // do not set currentRequestId from profile
       })
-      .catch(() => {/* ignore abort/network for now */});
+      .catch(() => {/* ignore abort/network for now */ });
 
     return () => controller.abort();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access]);
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -79,10 +82,11 @@ const Dashboard = () => {
       navigate('/product/request', { replace: true });
       return;
     }
+    if (hasActiveRequest) return;
 
     setPrLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/products/request/`, {
+      const res = await fetch(`${API_BASE}/api/products/requests/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,8 +103,17 @@ const Dashboard = () => {
         throw new Error(data.detail || data.error || 'Failed to submit product request');
       }
       setPrInfo(data.message || 'Product request submitted successfully.');
-      setProductTitle('');
-      setProductDescription('');
+      // Keep inputs as-is; do not clear Title/Description
+      // Optionally sync with backend echo to avoid drift
+      if (typeof data?.title === 'string') setProductTitle(data.title);
+      if (typeof data?.description === 'string') setProductDescription(data.description);
+      // Immediately reflect active state so fields are disabled until admin marks it inactive/deletes
+      setHasActiveRequest(true);
+      if (data?.id) setCurrentRequestId(data.id);
+      if (typeof data?.price !== 'undefined') {
+        const priceInr = Number.parseFloat(data.price);
+        if (Number.isFinite(priceInr) && priceInr > 0) setPayAmountInr(Math.round(priceInr));
+      }
     } catch (err) {
       setPrError(err.message);
     } finally {
@@ -108,11 +121,174 @@ const Dashboard = () => {
     }
   };
   // --- end product request ---
+  // --- Fetch price from user's latest ProductRequest (no panel shown) ---
+  useEffect(() => {
+    if (!access) return;
+    const controller = new AbortController();
+    fetch(`${API_BASE}/api/products/requests/mine/`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${access}`,
+        'Accept': 'application/json'
+      },
+      signal: controller.signal
+    })
+      .then(async (res) => {
+        let data = {};
+        try { data = await res.json(); } catch { }
+        if (res.status === 401) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          navigate('/product/request', { replace: true });
+          return;
+        }
+        if (res.status === 404) {
+          // no request yet; keep amount at 0 and clear id
+          setCurrentRequestId(null);
+          setHasActiveRequest(false);
+          return;
+        }
+        if (!res.ok) return;
+        setHasActiveRequest(true);
+        // Rehydrate the input fields with the last submitted values
+        if (typeof data?.title === 'string') setProductTitle(data.title);
+        if (typeof data?.description === 'string') setProductDescription(data.description);
+        const priceInr = Number.parseFloat(data.price);
+        if (Number.isFinite(priceInr) && priceInr > 0) {
+          // round to whole INR for display and payment
+          setPayAmountInr(Math.round(priceInr));
+        }
+        if (data?.id) setCurrentRequestId(data.id);
+      })
+      .catch(() => { /* ignore */ })
+      .finally(() => { });
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [access]);
+  // --- end price fetch ---
+
+  // --- Razorpay payment integration ---
+  const [payAmountInr, setPayAmountInr] = useState(0); // fixed amount from ProductRequest.price (INR)
+  const [payLoading, setPayLoading] = useState(false);
+  const [payError, setPayError] = useState('');
+  const [payInfo, setPayInfo] = useState('');
+
+  const INR_TO_PAISE = 100;
+
+  const ensureRazorpayLoaded = () =>
+    new Promise((resolve, reject) => {
+      if (typeof window !== 'undefined' && window.Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => reject(new Error('Failed to load Razorpay SDK'));
+      document.body.appendChild(script);
+    });
+
+  // removed manual request linking and on-mount fetch by id
+
+  const handlePayNow = async () => {
+    setPayError('');
+    setPayInfo('');
+    if (!access) {
+      setPayError('You must be logged in.');
+      navigate('/product/request', { replace: true });
+      return;
+    }
+    if (!currentRequestId) {
+      setPayError('No Product Request selected.');
+      return;
+    }
+    if (!payAmountInr || Number.isNaN(payAmountInr) || payAmountInr <= 0) {
+      setPayError('Invalid amount.');
+      return;
+    }
+
+    setPayLoading(true);
+    try {
+      await ensureRazorpayLoaded();
+
+      // 1) Create order on backend (amount in paise)
+      const createRes = await fetch(`${API_BASE}/api/payments/create-order/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access}`,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          product_request_id: currentRequestId
+        })
+      });
+      const orderData = await createRes.json().catch(() => ({}));
+      if (!createRes.ok) throw new Error(orderData.detail || orderData.error || 'Failed to create order');
+      // Sync displayed amount with backend authoritative amount
+      if (typeof orderData.amount === 'number') {
+        setPayAmountInr(orderData.amount / 100);
+      }
+
+      const keyId = orderData.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!keyId) {
+        throw new Error('Razorpay key not configured. Set VITE_RAZORPAY_KEY_ID or have backend return key_id.');
+      }
+
+      const options = {
+        key: keyId,
+        amount: orderData.amount,
+        currency: orderData.currency || 'INR',
+        name: 'Payment',
+        description: 'Order Payment',
+        order_id: orderData.order_id,
+        prefill: {
+          name: orderData.prefill?.name || name || '',
+          email: orderData.prefill?.email || '',
+          contact: orderData.prefill?.contact || ''
+        },
+        theme: { color: '#3dda25' },
+        handler: async function (response) {
+          // 2) Verify signature on backend
+          try {
+            const verifyRes = await fetch(`${API_BASE}/api/payments/verify/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access}`,
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            const verifyData = await verifyRes.json().catch(() => ({}));
+            if (!verifyRes.ok) throw new Error(verifyData.detail || verifyData.error || 'Verification failed');
+            setPayInfo(verifyData.detail || 'Payment successful and verified.');
+          } catch (err) {
+            setPayError(err.message);
+          }
+        },
+        modal: {
+          ondismiss: () => setPayError('Payment cancelled.')
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      setPayError(err.message);
+    } finally {
+      setPayLoading(false);
+    }
+  };
+  // --- end Razorpay payment integration ---
 
   return (
     <div style={{ padding: 24 }}>
-  <h2>Welcome{ name ? `, ${name}` : '' }</h2>
-  <p>You are logged in.</p>
+      <h2>Welcome{name ? `, ${name}` : ''}</h2>
+      <p>You are logged in.</p>
+
+      {/* (Removed) Latest Product Request panel */}
 
       {/* Submit Product Request */}
       <div style={{ marginTop: 24, maxWidth: 600 }}>
@@ -133,6 +309,7 @@ const Dashboard = () => {
               border: '1px solid #ccc',
               fontSize: 16
             }}
+            disabled={hasActiveRequest || prLoading}
             required
           />
           <textarea
@@ -151,13 +328,15 @@ const Dashboard = () => {
               fontSize: 16,
               resize: 'vertical'
             }}
+            disabled={hasActiveRequest || prLoading}
             required
           />
+          {/* active-request message intentionally removed; fields remain disabled when active */}
           {prError && <div style={{ color: 'red', marginBottom: 10 }}>{prError}</div>}
           {prInfo && <div style={{ color: 'green', marginBottom: 10 }}>{prInfo}</div>}
           <button
             type="submit"
-            disabled={prLoading}
+            disabled={prLoading || hasActiveRequest}
             style={{
               padding: '10px 20px',
               background: 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)',
@@ -172,7 +351,29 @@ const Dashboard = () => {
           </button>
         </form>
       </div>
-      
+      {/* Payment section */}
+      <div style={{ marginTop: 32, maxWidth: 600 }}>
+        <h3>Make a Payment</h3>
+        {/* Price is loaded automatically and shown only on the Pay button */}
+        {payError && <div style={{ color: 'red', marginBottom: 10 }}>{payError}</div>}
+        {payInfo && <div style={{ color: 'green', marginBottom: 10 }}>{payInfo}</div>}
+        <button
+          onClick={handlePayNow}
+          disabled={payLoading || !payAmountInr}
+          style={{
+            padding: '10px 20px',
+            background: 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 30,
+            cursor: 'pointer',
+            fontWeight: 600
+          }}
+        >
+          {payLoading ? 'Processing...' : `Pay ₹${Number(payAmountInr).toFixed(2)} INR`}
+        </button>
+      </div>
+
       <button
         style={{
           padding: '8px 16px',
