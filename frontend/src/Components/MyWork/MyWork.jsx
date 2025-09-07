@@ -19,10 +19,10 @@ const MyWork = () => {
                     </Link>
                 ))}
             </div>
-            <div className="mywork-showmore">
+            <Link to="/work" className="mywork-showmore">
                 <p>Show More</p>
                 <img src={arrow_icon} alt="" />
-            </div>
+            </Link>
         </div>
     );
 };

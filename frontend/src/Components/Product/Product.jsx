@@ -20,21 +20,30 @@ const buttonStyle = {
 const inputStyle = {
   display: 'block',
   margin: '16px auto',
-  padding: '10px',
+  padding: '10px 12px',
   width: '90%',
   maxWidth: '350px',
   borderRadius: '8px',
-  border: '1px solid #ccc',
-  fontSize: '16px'
+  background: '#23272f',
+  border: '1px solid #3a3f47',
+  color: '#f5f7fa',
+  fontSize: '16px',
+  lineHeight: 1.4,
+  boxShadow: '0 1px 2px rgba(0,0,0,0.4) inset',
+  transition: 'background .25s, border-color .25s'
 };
 
 const tabStyle = isActive => ({
   ...buttonStyle,
-  background: isActive ? 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)' : '#eee',
-  color: isActive ? 'white' : '#333',
-  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+  background: isActive
+    ? 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)'
+    : '#2b2f36',
+  color: isActive ? '#f5f7fa' : '#c3c9d1',
+  boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.6)' : '0 0 0 rgba(0,0,0,0)',
   marginTop: 0,
-  marginBottom: 20
+  marginBottom: 20,
+  border: isActive ? '1px solid rgba(255,255,255,0.18)' : '1px solid #3a3f47',
+  transition: 'background .25s, color .25s'
 });
 
 const Product = () => {

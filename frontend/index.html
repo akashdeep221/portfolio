@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/png" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f47d.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta id="mainViewport" name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Akashdeep | Fullstack Developer Portfolio Website</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,25 @@
 
 <body>
   <div id="root"></div>
+  <script>
+    (function() {
+      function resetIfZoomed() {
+        var vv = window.visualViewport;
+        if (!vv) return;
+        if (Math.abs(vv.scale - 1) > 0.03) {
+          var meta = document.getElementById('mainViewport');
+          if (meta) {
+            meta.setAttribute('content','width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+            setTimeout(function(){
+              meta.setAttribute('content','width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover');
+            }, 400);
+          }
+        }
+      }
+      window.addEventListener('pageshow', resetIfZoomed);
+      document.addEventListener('visibilitychange', function(){ if (!document.hidden) resetIfZoomed(); });
+    })();
+  </script>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

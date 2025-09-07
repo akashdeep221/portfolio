@@ -97,20 +97,21 @@
     transition: 0.5s;
 }
 
-@media (max-width: 800px){
+@media (max-width: 1280px){
     .about{
         gap: 50px;
         margin: 50px 6%;
-        align-items: start;
+        align-items: center;
     }
     .about-title h1{
         font-size: 50px;
         padding: 0;
+        /* margin-left: 45px; */
     }
     .about-title img{
         width: 200px;
-        right: -20px;
-        left: 75px;
+        right: 0px;
+        left: 125px;
         top: 0px;
     }
     .about-section{
@@ -148,7 +149,8 @@
     }
     .about-achievements{
         justify-content: space-between;
-        margin-left: -2px;
+        margin-left: 2px;
+        margin-right: 2px;
     }
     .about-achievement{
         gap: 10px;

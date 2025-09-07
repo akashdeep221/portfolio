@@ -289,51 +289,84 @@ const Dashboard = () => {
       <p>You are logged in.</p>
 
       {/* (Removed) Latest Product Request panel */}
-
-      {/* Submit Product Request */}
-      <div style={{ marginTop: 24, maxWidth: 600 }}>
-        <h3>Submit Product Request</h3>
-        <form onSubmit={handleSubmitProduct}>
-          <input
-            type="text"
-            placeholder="Product Title"
-            value={productTitle}
-            onChange={(e) => setProductTitle(e.target.value)}
-            style={{
-              display: 'block',
-              width: '100%',
-              maxWidth: 500,
-              padding: '10px',
-              marginBottom: '12px',
-              borderRadius: 8,
-              border: '1px solid #ccc',
-              fontSize: 16
-            }}
-            disabled={hasActiveRequest || prLoading}
-            required
-          />
-          <textarea
-            placeholder="Describe the product you need"
-            value={productDescription}
-            onChange={(e) => setProductDescription(e.target.value)}
-            rows={6}
-            style={{
-              display: 'block',
-              width: '100%',
-              maxWidth: 500,
-              padding: '10px',
-              marginBottom: '12px',
-              borderRadius: 8,
-              border: '1px solid #ccc',
-              fontSize: 16,
-              resize: 'vertical'
-            }}
-            disabled={hasActiveRequest || prLoading}
-            required
-          />
-          {/* active-request message intentionally removed; fields remain disabled when active */}
-          {prError && <div style={{ color: 'red', marginBottom: 10 }}>{prError}</div>}
-          {prInfo && <div style={{ color: 'green', marginBottom: 10 }}>{prInfo}</div>}
+        <div style={{ marginTop: 24, maxWidth: 600, marginBottom: 24 }}>
+          <h3 style={{ marginBottom: 24 }}>Submit Product Request</h3>
+          <style>
+            {`
+          .pr-field::placeholder {
+            color: #9aa0b1;
+            opacity: 1;
+          }
+          .pr-field[disabled] {
+            background: #1f1f23 !important;
+            color: #f5f7fa !important;
+            border-color: #3a3f4b !important;
+            box-shadow: 0 0 0 1px #2a2f37 inset;
+          }
+          .pr-field[disabled]:focus {
+            outline: 2px solid #555a64;
+            outline-offset: 2px;
+          }
+          @media (prefers-color-scheme: dark) {
+            .pr-field {
+              background: #24262b;
+              color: #f5f7fa;
+              border: 1px solid #444a55;
+            }
+            .pr-field:not([disabled]):focus {
+              border-color: #6d6fff;
+              box-shadow: 0 0 0 2px rgba(109,111,255,0.35);
+            }
+          }
+            `}
+          </style>
+          <form onSubmit={handleSubmitProduct}>
+            <input
+          type="text"
+          placeholder="Product Title"
+          value={productTitle}
+          onChange={(e) => setProductTitle(e.target.value)}
+          className="pr-field"
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: 500,
+            padding: '12px 14px',
+            marginBottom: '12px',
+            borderRadius: 10,
+            border: '1px solid #ccc',
+            fontSize: 16,
+            lineHeight: 1.4,
+            transition: 'background .25s, color .25s, border-color .25s'
+          }}
+          disabled={hasActiveRequest || prLoading}
+          required
+            />
+            <textarea
+          placeholder="Describe the product you need"
+          value={productDescription}
+          onChange={(e) => setProductDescription(e.target.value)}
+          rows={6}
+          className="pr-field"
+          style={{
+            display: 'block',
+            width: '100%',
+            maxWidth: 500,
+            padding: '12px 14px',
+            marginBottom: '12px',
+            borderRadius: 10,
+            border: '1px solid #ccc',
+            fontSize: 16,
+            lineHeight: 1.5,
+            resize: 'vertical',
+            transition: 'background .25s, color .25s, border-color .25s'
+          }}
+          disabled={hasActiveRequest || prLoading}
+          required
+            />
+            {/* active-request message intentionally removed; fields remain disabled when active */}
+            {prError && <div style={{ color: 'red', marginBottom: 10 }}>{prError}</div>}
+            {prInfo && <div style={{ color: 'green', marginBottom: 10 }}>{prInfo}</div>}
           <button
             type="submit"
             disabled={prLoading || hasActiveRequest}
@@ -344,35 +377,39 @@ const Dashboard = () => {
               border: 'none',
               borderRadius: 30,
               cursor: 'pointer',
-              fontWeight: 600
+              fontWeight: 600,
+              marginTop: 12
             }}
           >
             {prLoading ? 'Submitting...' : 'Submit Product Request'}
           </button>
         </form>
       </div>
-      {/* Payment section */}
-      <div style={{ marginTop: 32, maxWidth: 600 }}>
-        <h3>Make a Payment</h3>
-        {/* Price is loaded automatically and shown only on the Pay button */}
-        {payError && <div style={{ color: 'red', marginBottom: 10 }}>{payError}</div>}
-        {payInfo && <div style={{ color: 'green', marginBottom: 10 }}>{payInfo}</div>}
-        <button
-          onClick={handlePayNow}
-          disabled={payLoading || !payAmountInr}
-          style={{
-            padding: '10px 20px',
-            background: 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 30,
-            cursor: 'pointer',
-            fontWeight: 600
-          }}
-        >
-          {payLoading ? 'Processing...' : `Pay ₹${Number(payAmountInr).toFixed(2)} INR`}
-        </button>
-      </div>
+      <p>Keep checking your mails for further communication and updates!</p>
+      {/* Payment section (only if positive amount) */}
+      {payAmountInr > 0 && (
+        <div style={{ marginTop: 32, maxWidth: 600 }}>
+          <h3>Make a Payment</h3>
+          {payError && <div style={{ color: 'red', marginBottom: 10 }}>{payError}</div>}
+          {payInfo && <div style={{ color: 'green', marginBottom: 10 }}>{payInfo}</div>}
+          <button
+            onClick={handlePayNow}
+            disabled={payLoading || !payAmountInr}
+            style={{
+              padding: '10px 20px',
+              background: 'linear-gradient(267deg, #3dda25 0.36%, #e123c4 102.06%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 30,
+              cursor: 'pointer',
+              fontWeight: 600,
+              marginTop: 12
+            }}
+          >
+            {payLoading ? 'Processing...' : `Pay ₹${Number(payAmountInr).toFixed(2)} INR`}
+          </button>
+        </div>
+      )}
 
       <button
         style={{

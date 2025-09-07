@@ -86,22 +86,33 @@
     width: 700px;
     height: 78px;
     padding-left: 20px;
-    border-radius: 4px;
+    border-radius: 50px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     background: #c815ff00;
     color: antiquewhite;
     font-family: Play, sans-serif;
     font-size: 20px;
 }
 
+.contact-right input:hover{
+    border: 2px solid #08dfd4;
+}
+
 .contact-right textarea{
     width: 650px;
     border: none;
+    margin-top: 15px;
     padding: 25px;
-    border-radius: 4px;
+    border-radius: 50px;
     background: #c815ff00;
     color: antiquewhite;
     font-family: Play, sans-serif;
     font-size: 20px;
+}
+
+.contact-right textarea:hover{
+    border: 2px solid #08dfd4;
 }
 
 .contact-submit{
@@ -122,29 +133,36 @@
     transition: 0.3s;
 }
 
-@media (max-width: 800px){
+@media (max-width: 1280px){
     .contact{
         gap: 50px;
-        margin: 50px 70px;
-        align-items: start;
+        margin: 25px 25px;
+        align-items: center;
     }
     .contact-title h1{
         padding: 0;
+        text-align: center;
         font-size: 50px;
         font-weight: 600;
     }
     .contact-title img{
         width: 130px;
         margin-right: -20px;
+        position: absolute;
+        top: 20px;
+        left: 110px;
     }
     .contact-section{
         flex-direction: column;
+        gap: 80px;
+        align-items: center;
     }
     .contact-left h1{
         font-size: 54px;
     }
     .contact-left p{
         font-size: 18px;
+        margin: 0 0;
     }
     .contact-detail{
         gap: 20px;
@@ -152,19 +170,32 @@
     .contact-detail img{
         width: 25px;
     }
+    .contact-right {
+        align-items: center;
+        margin: 0 0;
+        width: 90%;
+    }
     .contact-right label {
         font-size: 20px;
+        display: block;
+        width: 100%;
+        text-align: left;
     }
     .contact-right input {
-        width: 100%;
+        width: 80%;
+        align-self: flex-start;
+        margin-left: 0;
         font-size: 20px;
     }
     .contact-right textarea {
-        width: 95%;
+        width: 80%;
+        align-self: flex-start;
+        margin-left: 0;
         font-size: 20px;
     }
     .contact-submit {
         font-size: 20px;
         padding: 15px 40px;
+        align-self: center;
     }
 }

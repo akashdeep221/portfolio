@@ -9,6 +9,7 @@ import Contact from './Components/Contact/Contact';
 import Footer from './Components/Footer/Footer';
 import SolutionPage from './Components/SolutionPage/SolutionPage';
 import WorkPage from './Components/WorkPage/WorkPage';
+import AllWork from './Components/WorkPage/AllWork';
 import Product from './Components/Product/Product';
 import Dashboard from './pages/Dashboard';
 import ResetPassword from './pages/ResetPassword';
@@ -30,6 +31,7 @@ const App = () => {
         } />
         <Route path="/solution/:id" element={<SolutionPage />} />
         <Route path="/workpage/:id" element={<WorkPage />} />
+        <Route path="/work" element={<AllWork />} />
         <Route path="/product/request" element={<Product />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/reset-password/:uidb64/:token" element={<ResetPassword />} />
