@@ -9,7 +9,7 @@ const Solutions = () => {
     return (
         <div id='solutions' className='solutions'>
             <div className="solutions-title">
-                <h1>My Solutions</h1>
+                <h1>My Products</h1>
                 <img src={theme_pattern} alt="" />
             </div>
             <div className="solutions-container">

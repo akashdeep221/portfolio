@@ -67,7 +67,7 @@ const ResetPassword = () => {
       try { data = await res.json(); } catch {}
       if (!res.ok) {
         let msg = (data && (data.detail || data.error)) || 'Failed to reset password';
-        // Surface field errors if present (e.g., { new_password: ["..."] })
+        // Surface field errors if present
         if (data && typeof data === 'object') {
           const np = data.new_password;
           if (Array.isArray(np) && np.length) msg = np[0];

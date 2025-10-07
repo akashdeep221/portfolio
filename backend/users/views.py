@@ -25,7 +25,6 @@ class SignupView(generics.CreateAPIView):
         user.is_active = False
         user.save()
         # Send email verification
-        # current_site = get_current_site(self.request)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         activation_path = reverse('users:email-verify', kwargs={'uidb64': uid, 'token': token})
@@ -82,7 +81,6 @@ class PasswordResetRequestView(APIView):
             return Response({'detail': 'If the email exists, a reset link will be sent.'})
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
-        # Build frontend reset link so users land on React page, not DRF
         frontend_base = os.getenv('FRONTEND_BASE_URL', 'http://localhost:5173').rstrip('/')
         reset_link = f"{frontend_base}/reset-password/{uid}/{token}"
         send_mail(

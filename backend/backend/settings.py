@@ -82,11 +82,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://192.168.0.102:5173'
 ]
 
-# [o.strip() for o in _cors_origins.split(',') if o.strip()] if _cors_origins else [
-#     'http://localhost:5173',
-#     'http://127.0.0.1:5173',
-# ]
-
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF trusted origins (Django 4+) to mirror dev frontend origins
@@ -96,13 +91,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://192.168.0.102:5173'
 ]
-
-# [o.strip() for o in _csrf_trusted.split(',') if o.strip()] if _csrf_trusted else [
-#     'http://localhost:5173',
-#     'http://127.0.0.1:5173',
-# ]
-
-# CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'

@@ -48,9 +48,6 @@ const Contact = () => {
                         <div className="contact-detail">
                             <img src={mail_icon} alt="" /> <p>deepstar.fullstack@gmail.com</p>
                         </div>
-                        {/* <div className="contact-detail">
-                            <img src={call_icon} alt="" /> <p>+91543513547</p>
-                        </div> */}
                         <div className="contact-detail">
                             <img src={location_icon} alt="" /> <p>BLR, India</p>
                         </div>

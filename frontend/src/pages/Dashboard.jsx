@@ -42,18 +42,16 @@ const Dashboard = () => {
           navigate('/product/request', { replace: true });
           return;
         }
-        if (!res.ok) return; // keep any cached name
+        if (!res.ok) return;
         const candidate = data.name || data.full_name || data.username || data.email || '';
         if (candidate) {
           setName(candidate);
           localStorage.setItem('userName', candidate);
         }
-        // do not set currentRequestId from profile
       })
-      .catch(() => {/* ignore abort/network for now */ });
+      .catch(() => { });
 
     return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access]);
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
@@ -104,10 +102,8 @@ const Dashboard = () => {
       }
       setPrInfo(data.message || 'Product request submitted successfully.');
       // Keep inputs as-is; do not clear Title/Description
-      // Optionally sync with backend echo to avoid drift
       if (typeof data?.title === 'string') setProductTitle(data.title);
       if (typeof data?.description === 'string') setProductDescription(data.description);
-      // Immediately reflect active state so fields are disabled until admin marks it inactive/deletes
       setHasActiveRequest(true);
       if (data?.id) setCurrentRequestId(data.id);
       if (typeof data?.price !== 'undefined') {
@@ -121,7 +117,7 @@ const Dashboard = () => {
     }
   };
   // --- end product request ---
-  // --- Fetch price from user's latest ProductRequest (no panel shown) ---
+  // --- Fetch price from user's latest ProductRequest ---
   useEffect(() => {
     if (!access) return;
     const controller = new AbortController();
@@ -143,7 +139,7 @@ const Dashboard = () => {
           return;
         }
         if (res.status === 404) {
-          // no request yet; keep amount at 0 and clear id
+          // no request yet
           setCurrentRequestId(null);
           setHasActiveRequest(false);
           return;
@@ -160,10 +156,9 @@ const Dashboard = () => {
         }
         if (data?.id) setCurrentRequestId(data.id);
       })
-      .catch(() => { /* ignore */ })
+      .catch(() => {  })
       .finally(() => { });
     return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access]);
   // --- end price fetch ---
 
@@ -185,7 +180,6 @@ const Dashboard = () => {
       document.body.appendChild(script);
     });
 
-  // removed manual request linking and on-mount fetch by id
 
   const handlePayNow = async () => {
     setPayError('');
@@ -208,7 +202,7 @@ const Dashboard = () => {
     try {
       await ensureRazorpayLoaded();
 
-      // 1) Create order on backend (amount in paise)
+      // Create order on backend
       const createRes = await fetch(`${API_BASE}/api/payments/create-order/`, {
         method: 'POST',
         headers: {
@@ -246,7 +240,7 @@ const Dashboard = () => {
         },
         theme: { color: '#3dda25' },
         handler: async function (response) {
-          // 2) Verify signature on backend
+          // Verify signature on backend
           try {
             const verifyRes = await fetch(`${API_BASE}/api/payments/verify/`, {
               method: 'POST',
@@ -288,7 +282,6 @@ const Dashboard = () => {
       <h2>Welcome{name ? `, ${name}` : ''}</h2>
       <p>You are logged in.</p>
 
-      {/* (Removed) Latest Product Request panel */}
         <div style={{ marginTop: 24, maxWidth: 600, marginBottom: 24 }}>
           <h3 style={{ marginBottom: 24 }}>Submit Product Request</h3>
           <style>
@@ -364,7 +357,6 @@ const Dashboard = () => {
           disabled={hasActiveRequest || prLoading}
           required
             />
-            {/* active-request message intentionally removed; fields remain disabled when active */}
             {prError && <div style={{ color: 'red', marginBottom: 10 }}>{prError}</div>}
             {prInfo && <div style={{ color: 'green', marginBottom: 10 }}>{prInfo}</div>}
           <button
@@ -386,7 +378,7 @@ const Dashboard = () => {
         </form>
       </div>
       <p>Keep checking your mails for further communication and updates!</p>
-      {/* Payment section (only if positive amount) */}
+      {/* Payment section */}
       {payAmountInr > 0 && (
         <div style={{ marginTop: 32, maxWidth: 600 }}>
           <h3>Make a Payment</h3>
