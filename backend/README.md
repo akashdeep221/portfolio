@@ -19,6 +19,7 @@ This is the Django backend for the portfolio website frontend.
 - Python 3.10+ (or compatible)
 - Node.js and npm (for frontend integration)
 - Virtual environment recommended
+
 _Developed and tested backend on Python 3.10.2_
 
 ## Setup

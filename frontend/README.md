@@ -18,6 +18,7 @@ A React + Vite frontend for a personal portfolio, product request flow, payments
 ## Prerequisites
 - Node.js 20+ (LTS recommended)
 - npm 10+
+
 _Developed and tested frontend on Node.js v20.10.0 and npm 10.2.3_
 
 ## Setup
