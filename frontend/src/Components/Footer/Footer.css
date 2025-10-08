@@ -99,6 +99,7 @@
         padding: 15px 10px;
         padding-right: 30px;
         max-width: 250px;
+        overflow: hidden;
     }
     .footer-bottom {
         display: flex;

@@ -49,7 +49,7 @@ pip3 install -r requirements.txt
 
 - Do NOT commit .env to version control.
 
-Example .env variables:
+Required .env variables:
 
 SECRET_KEY=your_django_secret_key
 DEBUG=True
@@ -57,10 +57,28 @@ ALLOWED_HOSTS=host_ips_you_allowed
 BACKEND_BASE_URL=your_backend_base_ip
 FRONTEND_BASE_URL=your_frontend_base_ip
 EMAIL_HOST_USER=your_email
-EMAIL_HOST_PASSWORD=your_email_password
+
+EMAIL_HOST_PASSWORD=your_email_app_password     # (Not your normal login password)
+                                                # Use an app-specific password or SMTP API key from your email provider.
+                                                # Example – Gmail (recommended for this setup):
+                                                # 1. Enable 2-Step Verification on your Gmail account.
+                                                # 2. Visit https://myaccount.google.com/apppasswords
+                                                # 3. Choose App: Mail, Device: Other (or your choice)
+                                                # 4. Copy the 16-character code (remove spaces when adding to .env)
+
 CORS_ALLOWED_ORIGINS=your_ips_that_are_allowed_in_backend
+
 RAZORPAY_KEY_ID=your_razorpay_gateway_key
-RAZORPAY_KEY_SECRET=your_razorpay_gateway_secret
+RAZORPAY_KEY_SECRET=your_razorpay_gateway_secret    # Here’s how to get your Razorpay API keys (Key ID and Key Secret):
+                                                    # Sign up/log in: https://dashboard.razorpay.com
+                                                    # Switch to Test Mode (top-right toggle) for development.
+                                                    # Go to Account & Settings → API Keys.
+                                                    # Click “Generate Test Key.” You’ll see:
+                                                    # Key ID (public; can be used on frontend)
+                                                    # Key Secret (shown once; download/copy it now)
+                                                    # Add Key Secret to backend .env
+                                                    # For production, switch to Live Mode and “Generate Live Key,” then update the 
+                                                    # server’s .env with the live values (do not mix test and live keys).
 
 ### 5. Run database migrations
 - Windows (PowerShell):
@@ -79,11 +97,12 @@ python3 manage.py createsuperuser
 ### 7. Start the development server
 - Windows (PowerShell):
 python manage.py runserver
+(python manage.py runserver 0.0.0.0:8000 command can be used if devices on the same network faces problems while connecting to backend server)
 
 -Linux/macOS:
 python3 manage.py runserver
 
-- Server runs on http://localhost:8000 by default.
+- Server runs on http://127.0.0.1:8000 by default.
 
 - Ensure your virtual environment is activated whenever you run the server.
 

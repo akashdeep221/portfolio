@@ -75,22 +75,45 @@ REST_FRAMEWORK = {
 }
 
 # CORS
+def _csv_list(s: str) -> list[str]:
+    """Split a comma-separated env string into a clean list."""
+    return [x.strip() for x in s.split(',') if x.strip()] if s else []
+
 _cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').strip()
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://192.168.0.102:5173'
-]
+CORS_ALLOWED_ORIGINS = (
+    _csv_list(_cors_origins)
+    if _cors_origins
+    else [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ]
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
 # CSRF trusted origins (Django 4+) to mirror dev frontend origins
 _csrf_trusted = os.environ.get('CSRF_TRUSTED_ORIGINS', '').strip()
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://192.168.0.102:5173'
-]
+CSRF_TRUSTED_ORIGINS = (
+    _csv_list(_csrf_trusted)
+    if _csrf_trusted
+    else [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+    ]
+)
+
+# Production safety checks
+if not DEBUG:
+    if not ALLOWED_HOSTS:
+        raise ImproperlyConfigured("ALLOWED_HOSTS must be set in production")
+    # Prevent loopback-only configuration in production
+    if any(h == 'localhost' or h.startswith('127.') for h in ALLOWED_HOSTS):
+        raise ImproperlyConfigured("ALLOWED_HOSTS must not contain localhost/127.* in production")
+    # Require explicit CORS/CSRF config (no dev defaults)
+    if not _cors_origins:
+        raise ImproperlyConfigured("CORS_ALLOWED_ORIGINS must be set in production")
+    if not _csrf_trusted:
+        raise ImproperlyConfigured("CSRF_TRUSTED_ORIGINS must be set in production")
 
 # Custom user model
 AUTH_USER_MODEL = 'users.User'

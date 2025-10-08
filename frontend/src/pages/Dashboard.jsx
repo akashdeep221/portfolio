@@ -378,6 +378,8 @@ const Dashboard = () => {
         </form>
       </div>
       <p>Keep checking your mails for further communication and updates!</p>
+      <br />
+      <p>Once the Pay button is clicked, DO NOT close this window until the payment is processed.</p>
       {/* Payment section */}
       {payAmountInr > 0 && (
         <div style={{ marginTop: 32, maxWidth: 600 }}>

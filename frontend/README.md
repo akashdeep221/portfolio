@@ -26,12 +26,23 @@ npm install
 
 ### 2. Environment file
 - Create a .env in the frontend folder with the required variables:
-VITE_API_BASE_URL=http://localhost:8000 
-VITE_RAZORPAY_KEY_ID=rzp_test_xxx
+
+VITE_API_BASE_URL=your_backend_api_base_url
+VITE_RAZORPAY_KEY_ID=rzp_test_xxx       # Here’s how to get your Razorpay API keys (Key ID and Key Secret):
+                                        # Sign up/log in: https://dashboard.razorpay.com
+                                        # Switch to Test Mode (top-right toggle) for development.
+                                        # Go to Account & Settings → API Keys.
+                                        # Click “Generate Test Key.” You’ll see:
+                                        # Key ID (public; can be used on frontend)
+                                        # Key Secret (shown once; download/copy it now)
+                                        # Add Key Secret to backend .env
+                                        # For production, switch to Live Mode and “Generate Live Key,” then update the 
+                                        # server’s .env with the live values (do not mix test and live keys).
 
 ### 3. Running Locally
 - Start the development server:
 npm run dev
+(npm run dev -- --host command can be used if devices on the same network faces problems while connecting to frontend server)
 
 - Then open the shown URL (typically http://localhost:5173) in your browser.
 
