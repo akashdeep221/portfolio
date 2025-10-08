@@ -4,6 +4,7 @@ A Fullstack Portfolio Website showcasing my portfolio, personal projects, user i
 
 ## 📁 Project Structure
 
+```bash
 portfolio/                       # project root
 │
 ├── backend/                     # Django REST API (Business Logic + Payments + Auth)
@@ -17,6 +18,7 @@ portfolio/                       # project root
 │   └── ...                      # Other frontend files and assets
 │
 └── README.md                    # Combined project overview and high-level instructions (This File)
+```
 
 ## 🧠 Overview
 

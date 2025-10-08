@@ -51,6 +51,7 @@ pip3 install -r requirements.txt
 
 Required .env variables:
 
+```bash
 SECRET_KEY=your_django_secret_key
 DEBUG=True
 ALLOWED_HOSTS=host_ips_you_allowed
@@ -79,6 +80,7 @@ RAZORPAY_KEY_SECRET=your_razorpay_gateway_secret    # Here’s how to get your R
                                                     # Add Key Secret to backend .env
                                                     # For production, switch to Live Mode and “Generate Live Key,” then update the 
                                                     # server’s .env with the live values (do not mix test and live keys).
+```
 
 ### 5. Run database migrations
 - Windows (PowerShell):
